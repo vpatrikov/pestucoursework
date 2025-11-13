@@ -9,6 +9,11 @@ typedef std::string string;
 #include "menuItem.h"
 #include "userGroup.h"
 #include "User.h"
+#include "file_manager.h"
+
+userGroup *students_group;
+userGroup *teachers_group;
+userGroup *outside_people_group;
 
 int mainMenu()
 {
@@ -54,16 +59,16 @@ int mainMenu()
     } while (true);
 }
 
-menuItem createAnItem(std::vector<menuItem *> &menu)
+menuItem *createAnItem(std::vector<menuItem *> &menu)
 {
-    menuItem temp;
+    menuItem *temp = new menuItem();
     std::string name;
     double price;
     int id;
 
     std::cout << "Enter the name of your item: ";
     std::cin >> name;
-    temp.setItem(name);
+    temp->setItem(name);
 
     while (true)
     {
@@ -82,7 +87,7 @@ menuItem createAnItem(std::vector<menuItem *> &menu)
             if (price <= 0)
                 throw std::invalid_argument("\nPrice must be greater than 0.\n");
 
-            temp.setPrice(price);
+            temp->setPrice(price);
             break;
         }
         catch (const std::exception &e)
@@ -106,7 +111,7 @@ menuItem createAnItem(std::vector<menuItem *> &menu)
                 continue;
             }
 
-            temp.setitemId(id, menu);
+            temp->setitemId(id, menu);
             break;
         }
         catch (const std::exception &e)
@@ -118,16 +123,16 @@ menuItem createAnItem(std::vector<menuItem *> &menu)
     return temp;
 }
 
-User createAUser(std::vector<User *> &users)
+User *createAUser(std::vector<User *> &users)
 {
-    User temp;
+    User *temp = new User();
     std::string name;
     int id;
     std::string group;
 
     std::cout << "Enter the name of the user: ";
     std::cin >> name;
-    temp.setName(name);
+    temp->setName(name);
 
     while (true)
     {
@@ -144,7 +149,7 @@ User createAUser(std::vector<User *> &users)
                 continue;
             }
 
-            temp.setUserId(id, users);
+            temp->setUserId(id, users);
             break;
         }
         catch (const std::exception &e)
@@ -155,7 +160,16 @@ User createAUser(std::vector<User *> &users)
 
     std::cout << "Enter the user's group (teacher/student/none): ";
     std::cin >> group;
-    temp.setUserGroup(new userGroup(group));
+
+std:
+    transform(group.begin(), group.end(), group.begin(), ::tolower);
+
+    if (group == "student")
+        temp->setUserGroup(students_group);
+    else if (group == "teacher")
+        temp->setUserGroup(teachers_group);
+    else
+        temp->setUserGroup(outside_people_group);
 
     std::cout << "\n\n";
     return temp;
@@ -171,36 +185,36 @@ int main()
     std::vector<menuItem *> menu;
     std::vector<User *> users;
 
-    menuItem pizza("Pizza", 2.5, 1);
-    menuItem spaghetti("Karbonara", 6, 2);
-    menuItem musaka;
+    menuItem *pizza = new menuItem("Pizza", 2.5, 1);
+    menuItem *spaghetti = new menuItem("Karbonara", 6, 2);
+    menuItem *musaka = new menuItem();
 
-    menu.push_back(&pizza);
-    menu.push_back(&spaghetti);
-    menu.push_back(&musaka);
+    menu.push_back(pizza);
+    menu.push_back(spaghetti);
+    menu.push_back(musaka);
 
-    musaka.setitemId(3, menu);
-    musaka.setItem("Musaka");
-    musaka.setPrice(3.99);
+    musaka->setitemId(3, menu);
+    musaka->setItem("Musaka");
+    musaka->setPrice(3.99);
 
-    userGroup students("students");
-    userGroup teachers("teachers");
-    userGroup outside_people("none");
+    userGroup *students_group = new userGroup("students");
+    userGroup *teachers_group = new userGroup("teachers");
+    userGroup *outside_people_group = new userGroup("none");
 
-    User student_1("Vladimir Patrikov", 1, &students);
-    User student_2("Boncho Gabchev", 3, &students);
-    User student_3;
+    User *student_1 = new User("Vladimir Patrikov", 1, students_group);
+    User *student_2 = new User("Boncho Gabchev", 3, students_group);
+    User *student_3 = new User();
 
-    users.push_back(&student_1);
-    users.push_back(&student_2);
-    users.push_back(&student_3);
+    users.push_back(student_1);
+    users.push_back(student_2);
+    users.push_back(student_3);
 
-    student_3.setName("Martin");
-    student_3.setUserId(2, users);
-    student_3.setUserGroup(&students);
+    student_3->setName("Martin Ivanov");
+    student_3->setUserId(2, users);
+    student_3->setUserGroup(students_group);
 
-    menuItem newItem;
-    User newUser;
+    // menuItem *newItem = new menuItem();
+    // User *newUser = new User();
 
     int menuChoice;
 
@@ -210,11 +224,13 @@ int main()
         switch (menuChoice)
         {
         case 1:
-            newItem = createAnItem(menu);
-            menu.push_back(&newItem);
-            newItem.printItem();
+        {
+            menuItem *newItem = createAnItem(menu);
+            menu.push_back(newItem);
+            newItem->printItem();
             consoleReadKey();
             break;
+        }
 
         case 2:
             std::cout << "\nHere's what is on the menu at the moment:\n\n";
@@ -227,13 +243,31 @@ int main()
             consoleReadKey();
             break;
         case 3:
-            newUser = createAUser(users);
-            users.push_back(&newUser);
-            newUser.printUser();
+        {
+            User *newUser = createAUser(users);
+            users.push_back(newUser);
+            newUser->printUser();
             consoleReadKey();
             break;
+        }
         case 6:
             std::cout << "\nOk. Bye.\n";
+
+            saveData(menu, users);
+
+            for (int i = 0; i < menu.size(); i++)
+            {
+                delete menu[i];
+            }
+
+            for (int i = 0; i < users.size(); i++)
+            {
+                delete users[i];
+            }
+
+            delete teachers_group;
+            delete students_group;
+            delete outside_people_group;
             return 0;
         default:
             std::cout << "\nInvalid choice from the menu\n";
