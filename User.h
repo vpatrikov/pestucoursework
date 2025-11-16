@@ -4,6 +4,7 @@
 #include <vector>
 
 #include "userGroup.h"
+#include "menuItem.h"
 
 typedef std::string string;
 
@@ -28,6 +29,8 @@ public:
     void setUserGroup(userGroup *group) { this->group = group; }
 
     void printUser();
+
+    void printPricesForUser(std::vector<menuItem *> &menu);
 
     ~User() { /* std::cout << "\nDestructor for user called.\n"; */ }
 };

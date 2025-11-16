@@ -1,11 +1,12 @@
 #include "User.h"
 #include "userGroup.h"
+#include "menuItem.h"
 
 User::User()
 {
     this->name = "";
     this->id = 0;
-    group = nullptr;
+    this->group = nullptr;
 }
 
 User::User(string name, int id, userGroup *group)
@@ -32,5 +33,15 @@ void User::setUserId(int id, std::vector<User *> &users)
 void User::printUser()
 {
     printf("ID:%d, Name: %s, Group: %s, Price modifier: %.2f", id, name.c_str(),
-    this->getUserGroup().c_str(), group->getPriceModifier());
+           this->getUserGroup().c_str(), group->getPriceModifier());
+}
+void User::printPricesForUser(std::vector<menuItem *> &menu)
+{
+    for (int i = 0; i < menu.size(); i++)
+    {
+        std::cout << "itemID: " << menu[i]->getitemId()
+                  << " itemName: " << menu[i]->getItem()
+                  << "Modified for " << name << " price: "
+                  << menu[i]->getPrice() * group->getPriceModifier();
+    }
 }
