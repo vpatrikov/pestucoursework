@@ -17,7 +17,7 @@ menuItem::menuItem(string item, double price, int itemId)
 void menuItem::setPrice(double price)
 {
     if (price <= 0)
-        std::cout << "\nPrice cannot be equal or less then 0\n";
+         throw std::invalid_argument("\nPrice cannot be equal or less then 0\n");
     else
         this->price = price;
 }

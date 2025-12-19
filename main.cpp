@@ -62,7 +62,7 @@ int mainMenu()
 menuItem *createAnItem(std::vector<menuItem *> &menu)
 {
     menuItem *temp = new menuItem();
-    std::string name;
+    string name;
     double price;
     int id;
 
@@ -161,7 +161,6 @@ User *createAUser(std::vector<User *> &users)
     std::cout << "Enter the user's group (teacher/student/none): ";
     std::cin >> group;
 
-std:
     std::transform(group.begin(), group.end(), group.begin(), ::tolower);
 
     if (group == "student")
